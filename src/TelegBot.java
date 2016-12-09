@@ -36,12 +36,12 @@ class TelegBot extends TelegramLongPollingBot{
 
     @Override
     public String getBotUsername() {
-        return "arszorin_bot";
+        return "YOUR BOT'S NAME";
     }
 
     @Override
     public String getBotToken() {
-        return "327648179:AAEC8acuq81q7sKwodfkYrdpLLqEhilRwMU";
+        return "YOUR API";
     }
 
     private void sendMsg(Message message, String text) {
