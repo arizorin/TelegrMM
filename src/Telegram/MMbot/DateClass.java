@@ -1,3 +1,5 @@
+package Telegram.MMbot;
+
 import java.util.Calendar;
 import java.util.Date;
 
@@ -5,7 +7,7 @@ import java.util.Date;
 /**
  * Created by arseniy on 10.12.16.
  */
-public class Data {
+public class DateClass {
     int day = 1;
     int week = 1;
     long time;

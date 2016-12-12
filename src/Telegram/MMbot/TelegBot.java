@@ -1,6 +1,7 @@
+package Telegram.MMbot;
+
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
-import org.telegram.telegrambots.api.methods.ParseMode;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.Message;
@@ -11,13 +12,11 @@ import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
-import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
+import java.util.stream.Stream;
 
 
 public class TelegBot extends TelegramLongPollingBot {
@@ -35,6 +34,7 @@ public class TelegBot extends TelegramLongPollingBot {
         try {
             telegramBotsApi.registerBot(new TelegBot());
             System.out.println(ANSI_GREEN +"CONNECTION ESTABLISHED SUCCESSFULLY!" + ANSI_RESET);
+            System.out.println("---------------------------------------------------");
         } catch (TelegramApiException e) {
             System.out.print(ANSI_RED + "Connection Failed!" + ANSI_RESET);
             e.printStackTrace();
@@ -57,24 +57,21 @@ public class TelegBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        Calendar c = Calendar.getInstance();
-        c.setTime(new java.util.Date());
-        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
-        Date dNow = new Date( );
-        StringBuilder sb = new StringBuilder();
-            Message message1 = new Message();
-            Chat chat = message1.getChat();
-            User user = message1.getFrom();
+        DateClass date = new DateClass();
 
-        SimpleDateFormat ft = new SimpleDateFormat ("E yyyy.MM.dd 'at' hh:mm:ss a zzz");
-        System.out.println("QUERY SENT ON " + ft.format(dNow));
+        Date dNow = new Date( );
+
+
+        SimpleDateFormat ft = new SimpleDateFormat (" E yyyy.MM.dd 'at' hh:mm:ss a zzz");
+        System.out.println(" QUERY SENT ON " + ft.format(dNow));
         Message message = update.getMessage();
+
         if (message != null && message.hasText()) {
             if (message.getText().equals("/магимэ") || message.getText().equals("/мгимо") || message.getText().equals("/start"))
                 sendMsg(message, "Меню помощи\n 1 - Для вызова расписание напиши 'Пары завтра' или 'Что я завтра проебу?'\n2 - Так же можно посмотреть и " +
                         "расписание на текущий день недели\n3 - Для того, чтобы узнать какая идет неделя напиши 'Какая неделя'\n");
             if (message.getText().equals("Пары завтра") || message.getText().equals("Что я завтра проебу?") || message.getText().equals("/rasp")) {
-                switch (dayOfWeek) {
+                switch (date.getDayWeek()) {
                     case 1:
                         sendMsg(message, "1 - Физ-ра\n2 - Мировая экономика\n3 - Испанский\n4 - Статистика");
                         break;
@@ -100,7 +97,7 @@ public class TelegBot extends TelegramLongPollingBot {
             }
 
             if (message.getText().equals("Пары сегодня")) {
-                switch (dayOfWeek - 1) {
+                switch (date.getDayWeek() - 1) {
                     case 1:
                         sendMsg(message, "1 - Физ-ра\n2 - Мировая экономика\n3 - Испанский\n4 - Статистика");
                         break;
@@ -127,7 +124,7 @@ public class TelegBot extends TelegramLongPollingBot {
 
               if (message.getText().equals("Какая неделя")){
                   String files = "";
-                  Base file = new Base();
+                  FileClass file = new FileClass();
                    files = file.getFile();
                   int check = Integer.parseInt(files);
 
@@ -139,11 +136,33 @@ public class TelegBot extends TelegramLongPollingBot {
                           sendMsg(message, "Сейчас идет " + check + "-я неделя.\nНечетная.");
                       }
                   }
+              }
 
+              if (message.getText().equals("/register")) {
+                  User user = message.getFrom();
+                  RegisterUser reg = new RegisterUser();
+                  StringBuilder sb = new StringBuilder();
+                  int memory;
+                  sb.append(user.getId());
+                  memory = Integer.parseInt(sb.toString());
+                  if (reg.checkUser(memory) != true) {
+                      String group = "MEO2-2";
+                      boolean status;
+                      StringBuilder fio = new StringBuilder();
+                      fio.append("Name: " + user.getFirstName() + " Surname: " + user.getLastName() + " Username: " + user.getUserName());
+                      status = reg.regUser(memory, group, fio.toString());
+                      if (status == true) {
+                          sendMsg(message, "Пользователь с id: '" + sb.toString() + "' ,был зарегистрирован.");
+                      } else
+                          sendMsg(message, "Ошибка регистрации.");
+                  }
+                  else
+                      sendMsg(message, "Пользователь уже был зарегистрирован.");
+              }
               }
 
             }
-        }
+
 
     private void sendMsg(Message message, String text) {
 

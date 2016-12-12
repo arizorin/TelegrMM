@@ -1,25 +1,19 @@
-import org.telegram.telegrambots.api.objects.Message;
+package Telegram.MMbot;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.time.DayOfWeek;
 import java.util.Scanner;
-
-import static java.time.DayOfWeek.*;
 
 /**
  * Created by arseniy on 09.12.16.
  */
-public class Base {
+public class FileClass {
     String line;
     int week = 1;
 
     private String file = "week";
 
     TelegBot tb = new TelegBot();
-    Data dat = new Data();
+    DateClass dat = new DateClass();
 
     public String getFile() {
 
