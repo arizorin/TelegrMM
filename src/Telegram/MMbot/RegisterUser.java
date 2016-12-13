@@ -11,13 +11,12 @@ import java.nio.file.Files;
 
 public class RegisterUser{
     String text;
-    String group;
     String format = "";
     String filePath = "userbase";
 
 
     public boolean regUser(int id, String group, String fio) {
-        if(group != null && group != format) {
+        if(group != null ) {
 
            try {
                 text ="'" + Integer.toString(id) + "'" + "," + "'" + group + "'" + "; - " + fio + "\n";
@@ -61,9 +60,33 @@ public class RegisterUser{
             System.out.println("USER SEARCH ERROR");
 
         }
-        System.out.println("BAD");
         return false;
+    }
 
+    public boolean setGroup(int id, String group){
+        String search = "'"+Integer.toString(id)+"'";
+        try{
+            FileInputStream ips = new FileInputStream(new File(filePath));
+            byte[] content = new byte[ips.available()];
+            ips.read(content);
+            ips.close();
+
+            String[] lines = new String(content, "Cp1251").split(";\n");
+            for (String line : lines) {
+                if (line.contains(search)) {
+
+                    return true;
+                }
+                else
+                    return false;
+            }
+
+        }
+        catch (IOException e){
+            System.out.println("GROUP SEARCH ERROR");
+
+        }
+        return false;
     }
 
 }
